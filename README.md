@@ -2,7 +2,7 @@
 
 This app scans for nearby Bluetooth Low Energy (BLE) devices, displays them in a list and supports both iOS and Android via ReactNative.
 
-This README provides information for developers to set up and run the app, as well as for QA engineers to test the builds.
+This README provides information for developers to set up and run the app, as well as for QA engineers to test the builds. APKs and IPAs are in the build folder.
 
 ## Prerequisites
 
