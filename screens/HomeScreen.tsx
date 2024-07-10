@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Button, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, StyleSheet } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import DeviceList, { BLEDevice } from '../components/DeviceList';
@@ -9,6 +9,32 @@ const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 const HomeScreen = () => {
   const [devices, setDevices] = useState<BLEDevice[]>([]);
   const [scanning, setScanning] = useState(false);
+
+  const scanDevices = useCallback(async () => {
+    const permissionsGranted = await requestBluetoothPermissions();
+    if (permissionsGranted) {
+      try {
+        console.log('Starting scan...');
+        setScanning(true);
+        setDevices([]); // Clear existing devices
+        await BleManager.scan([], 3, true); // Scan for 3 seconds
+        console.log('Scan started successfully');
+        
+        // Set a timeout to stop scanning after 3 seconds
+        setTimeout(() => {
+          BleManager.stopScan().then(() => {
+            console.log('Scan stopped');
+            setScanning(false);
+          });
+        }, 3000);
+      } catch (error) {
+        console.error('Error during scan:', error);
+        setScanning(false);
+      }
+    } else {
+      console.log('Required permissions not granted');
+    }
+  }, []);
 
   useEffect(() => {
     // Start BLE Manager
@@ -31,12 +57,20 @@ const HomeScreen = () => {
         });
       }
     );
+
+    // Set up interval for scanning every 5 seconds
+    const scanInterval = setInterval(() => {
+      if (!scanning) {
+        scanDevices();
+      }
+    }, 5000);
   
     // Clean up
     return () => {
       discoverListener.remove();
+      clearInterval(scanInterval);
     };
-  }, []);
+  }, [scanDevices, scanning]);
 
   const requestBluetoothPermissions = async () => {
     if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -74,32 +108,6 @@ const HomeScreen = () => {
       return bluetoothScan === 'granted' && bluetoothConnect === 'granted' && fineLocation === 'granted';
     }
     return true;
-  };
-
-  const scanDevices = async () => {
-    const permissionsGranted = await requestBluetoothPermissions();
-    if (permissionsGranted) {
-      try {
-        console.log('Starting scan...');
-        setScanning(true);
-        setDevices([]); // Clear existing devices
-        await BleManager.scan([], 10, true);
-        console.log('Scan started successfully');
-        
-        // Set a timeout to stop scanning after 10 seconds
-        setTimeout(() => {
-          BleManager.stopScan().then(() => {
-            console.log('Scan stopped');
-            setScanning(false);
-          });
-        }, 10000);
-      } catch (error) {
-        console.error('Error during scan:', error);
-        setScanning(false);
-      }
-    } else {
-      console.log('Required permissions not granted');
-    }
   };
 
   const handleRefresh = () => {
