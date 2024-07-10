@@ -1,7 +1,12 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
 import DeviceItem from './DeviceItem';
-import { BLEDevice } from '../utils/fakeBLEData';
+
+export interface BLEDevice {
+  id: string;
+  name: string;
+  rssi: number;
+}
 
 interface DeviceListProps {
   devices: BLEDevice[];
@@ -11,17 +16,10 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices }) => {
   return (
     <FlatList
       data={devices}
-      keyExtractor={(item) => item.id}
       renderItem={({ item }) => <DeviceItem device={item} />}
-      style={styles.list}
+      keyExtractor={(item) => item.id}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  list: {
-    marginTop: 16,
-  },
-});
 
 export default DeviceList;

@@ -1,40 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BLEDevice } from '../utils/fakeBLEData';
+import { BLEDevice } from './DeviceList';  // Import BLEDevice type from DeviceList
 
 interface DeviceItemProps {
-  device: BLEDevice;
+  device: BLEDevice;  // Change this to BLEDevice
 }
 
 const DeviceItem: React.FC<DeviceItemProps> = ({ device }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>{device.name}</Text>
-      <Text style={styles.rssi}>RSSI: {device.rssi}</Text>
+      <Text style={styles.name}>{device.name || 'Unknown Device'}</Text>
+      <Text style={styles.info}>ID: {device.id}</Text>
+      <Text style={styles.info}>RSSI: {device.rssi}</Text>
+      {/* Remove or comment out any properties that aren't in BLEDevice */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   name: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
-  rssi: {
+  info: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 4,
   },
 });
 
