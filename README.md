@@ -1,79 +1,106 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# MobileBluetoothReact App
 
-# Getting Started
+This app scans for nearby Bluetooth Low Energy (BLE) devices and displays them in a list. It supports both iOS and Android.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+This README provides information for developers to set up and run the app, as well as for QA engineers to test the builds.
 
-## Step 1: Start the Metro Server
+## Prerequisites
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- Node.js (v14 or later)
+- npm or yarn
+- React Native CLI
+- Xcode (for iOS development)
+- Android Studio (for Android development)
+- A physical iOS or Android device for testing BLE functionality
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## Dependencies
 
-```bash
-# using npm
-npm start
+- react: 17.0.2
+- react-native: 0.68.2
+- react-native-ble-manager: ^8.0.2
 
-# OR using Yarn
-yarn start
-```
+For a complete list of dependencies, please refer to the `package.json` file.
 
-## Step 2: Start your Application
+## Installation
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+1. Clone the repository:
+   ```
+   git clone https://github.com/rodneyg/MobileBluetoothReact.git
+   cd ble-scanner-app
+   ```
 
-### For Android
+2. Install dependencies:
+   ```
+   npm install
+   # or
+   yarn install
+   ```
 
-```bash
-# using npm
-npm run android
+3. Install iOS dependencies:
+   ```
+   cd ios
+   pod install
+   cd ..
+   ```
 
-# OR using Yarn
-yarn android
-```
+## Running the App on a Real Device
 
-### For iOS
+### iOS
 
-```bash
-# using npm
-npm run ios
+1. Open the `ios/MobileBluetoothReact.xcodeproj` file in Xcode.
+2. Connect your iOS device to your Mac.
+3. In Xcode, select your device from the device dropdown in the top left corner.
+4. Click the "Play" button or press `Cmd + R` to build and run the app on your device.
 
-# OR using Yarn
-yarn ios
-```
+Note: You may need to run pod install for Cocoapods and to set up code signing in Xcode and trust the developer on your iOS device.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Android
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+1. Enable Developer Options and USB Debugging on your Android device.
+2. Connect your Android device to your computer via USB.
+3. Open a terminal and run:
+   ```
+   npx react-native run-android
+   ```
 
-## Step 3: Modifying your App
+## For QA Engineers
 
-Now that you have successfully run the app, let's modify it.
+If you're working with built app binaries:
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### iOS
+1. Install the `.ipa` file on your iOS device using Apple TestFlight or a similar service.
+2. Ensure Bluetooth is enabled on your device.
+3. Launch the app and grant necessary permissions when prompted.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+### Android
+1. Install the `.apk` file on your Android device.
+2. Ensure Bluetooth is enabled on your device.
+3. Launch the app and grant necessary permissions when prompted.
 
-## Congratulations! :tada:
+## Notes and Caveats
 
-You've successfully run and modified your React Native App. :partying_face:
+- BLE functionality requires testing on physical devices. Emulators/simulators will not work for BLE scanning.
+- The app requires Bluetooth and Location permissions. On iOS, it will also ask for Local Network permissions.
+- On Android 12 and above, the app needs additional permissions (BLUETOOTH_SCAN and BLUETOOTH_CONNECT).
+- The scanning process times out after 10 seconds to conserve battery life.
 
-### Now what?
+## Dot Files and Configuration
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+- `.gitignore`: Specifies intentionally untracked files to ignore
+- `.watchmanconfig`: Configuration file for Watchman
+- `.eslintrc.js`: ESLint configuration
+- `.prettierrc.js`: Prettier configuration
+- `babel.config.js`: Babel configuration
+- `metro.config.js`: Metro bundler configuration
 
-# Troubleshooting
+## Troubleshooting
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+If you encounter any issues:
 
-# Learn More
+1. Ensure all permissions are granted to the app.
+2. For Android, make sure Location Services are enabled on the device.
+3. Clean and rebuild the project:
+   - For iOS: In Xcode, go to Product > Clean Build Folder
+   - For Android: `cd android && ./gradlew clean && cd ..`
 
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+If problems persist, please check the GitHub Issues page or open a new issue with detailed information about the problem.
