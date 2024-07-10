@@ -1,6 +1,6 @@
 # MobileBluetoothReact App
 
-This app scans for nearby Bluetooth Low Energy (BLE) devices and displays them in a list. It supports both iOS and Android.
+This app scans for nearby Bluetooth Low Energy (BLE) devices, displays them in a list and supports both iOS and Android.
 
 This README provides information for developers to set up and run the app, as well as for QA engineers to test the builds.
 
@@ -9,8 +9,8 @@ This README provides information for developers to set up and run the app, as we
 - Node.js (v14 or later)
 - npm or yarn
 - React Native CLI
-- Xcode (for iOS development)
-- Android Studio (for Android development)
+- Xcode
+- Android Studio
 - A physical iOS or Android device for testing BLE functionality
 
 ## Dependencies
@@ -102,5 +102,3 @@ If you encounter any issues:
 3. Clean and rebuild the project:
    - For iOS: In Xcode, go to Product > Clean Build Folder
    - For Android: `cd android && ./gradlew clean && cd ..`
-
-If problems persist, please check the GitHub Issues page or open a new issue with detailed information about the problem.
