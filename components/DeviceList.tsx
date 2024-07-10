@@ -1,6 +1,8 @@
+// components/DeviceList.tsx
 import React from 'react';
 import { FlatList, Text, View, StyleSheet, RefreshControl } from 'react-native';
 import DeviceItem from './DeviceItem';
+import EmptyListIndicator from './EmptyListIndicator';
 
 export interface BLEDevice {
   id: string;
@@ -15,22 +17,17 @@ interface DeviceListProps {
 }
 
 const DeviceList: React.FC<DeviceListProps> = ({ devices, onRefresh, isRefreshing }) => {
-  if (devices.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.text}>No devices found</Text>
-      </View>
-    );
-  }
-
   return (
     <FlatList
       data={devices}
       renderItem={({ item }) => <DeviceItem device={item} />}
       keyExtractor={(item) => item.id}
       ListHeaderComponent={
-        <Text style={styles.text}>Found {devices.length} devices:</Text>
+        devices.length > 0 ? (
+          <Text style={styles.headerText}>Found {devices.length} devices:</Text>
+        ) : null
       }
+      ListEmptyComponent={<EmptyListIndicator />}
       refreshControl={
         <RefreshControl
           refreshing={isRefreshing}
@@ -39,18 +36,19 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onRefresh, isRefreshin
           tintColor="#0000ff" // Blue color for iOS
         />
       }
+      contentContainerStyle={devices.length === 0 ? styles.emptyList : null}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  text: {
+  headerText: {
     color: '#000000',
     fontSize: 16,
     marginVertical: 10,
     paddingHorizontal: 10,
   },
-  emptyContainer: {
+  emptyList: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
