@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid } from 'react-native';
+import { View, Button, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, StyleSheet } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import DeviceList, { BLEDevice } from '../components/DeviceList';
 
@@ -11,24 +11,28 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
-    BleManager.start({ showAlert: false });
-
+    // Start BLE Manager
+    BleManager.start({showAlert: false});
+  
+    // Add event listener for discovered peripherals
     const discoverListener = bleManagerEmitter.addListener(
       'BleManagerDiscoverPeripheral',
       (device) => {
+        console.log('Discovered device:', device);
         setDevices((prevDevices) => {
-          if (!prevDevices.find((d) => d.id === device.id)) {
+          if (!prevDevices.some(d => d.id === device.id)) {
             return [...prevDevices, {
               id: device.id,
-              name: device.name || 'Unknown',
-              rssi: device.rssi,
+              name: device.name || 'Unknown Device',
+              rssi: device.rssi
             }];
           }
           return prevDevices;
         });
       }
     );
-
+  
+    // Clean up
     return () => {
       discoverListener.remove();
     };
@@ -73,31 +77,57 @@ const HomeScreen = () => {
   };
 
   const scanDevices = async () => {
-    const bluetoothPermission = await requestBluetoothPermissions();
-    if (bluetoothPermission) {
-      setScanning(true);
-      BleManager.scan([], 10, true).then(() => {
-        console.log('Scanning...');
-      });
-  
-      setTimeout(() => {
-        BleManager.stopScan().then(() => {
-          setScanning(false);
-          console.log('Scan stopped');
-        });
-      }, 10000);
+    const permissionsGranted = await requestBluetoothPermissions();
+    if (permissionsGranted) {
+      try {
+        console.log('Starting scan...');
+        setScanning(true);
+        setDevices([]); // Clear existing devices
+        await BleManager.scan([], 10, true);
+        console.log('Scan started successfully');
+        
+        // Set a timeout to stop scanning after 10 seconds
+        setTimeout(() => {
+          BleManager.stopScan().then(() => {
+            console.log('Scan stopped');
+            setScanning(false);
+          });
+        }, 10000);
+      } catch (error) {
+        console.error('Error during scan:', error);
+        setScanning(false);
+      }
     } else {
-      console.log('Bluetooth scan permission denied');
-      // You might want to show an alert to the user here
+      console.log('Required permissions not granted');
     }
   };
 
+  const handleRefresh = () => {
+    scanDevices();
+  };
+
   return (
-    <View>
-      <Button title={scanning ? 'Scanning...' : 'Scan for Devices'} onPress={scanDevices} disabled={scanning} />
-      <DeviceList devices={devices} />
+    <View style={styles.container}>
+      <Button 
+        title={scanning ? 'Scanning...' : 'Scan for Devices'} 
+        onPress={scanDevices} 
+        disabled={scanning} 
+      />
+      <DeviceList 
+        devices={devices} 
+        onRefresh={handleRefresh} 
+        isRefreshing={scanning} 
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 20,
+  },
+});
 
 export default HomeScreen;
