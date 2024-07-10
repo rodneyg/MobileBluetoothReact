@@ -1,4 +1,11 @@
 {
   "name": "MobileBluetoothReact",
-  "displayName": "MobileBluetoothReact"
+  "displayName": "MobileBluetoothReact",
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "fd908e3a-61a5-48cb-abfe-cffa9ca26ab1"
+      }
+    }
+  }
 }
